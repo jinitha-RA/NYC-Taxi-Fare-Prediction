@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+@theme {
+  /* Neutral scale: warm-leaning charcoals, not blue-greys. */
+  --color-ink-950: #08080a;
+  --color-ink-900: #0d0d10;
+  --color-ink-850: #131316;
+  --color-ink-800: #1a1a1e;
+  --color-ink-700: #26262c;
+  --color-ink-600: #35353d;
+  --color-ink-500: #5a5a66;
+  --color-ink-400: #8b8b97;
+  --color-ink-300: #b4b4bd;
+  --color-ink-200: #d9d9de;
+
+  /* The one accent. Warm amber -- taxi-adjacent without being a taxi. */
+  --color-accent: #f5a524;
+  --color-accent-soft: #fbc35a;
+  --color-accent-dim: #7a5210;
+
+  --animate-rise: rise 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-ink-950);
+  color: var(--color-ink-200);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Shared control styling. Written as plain CSS so every input, select and
+   slider picks up identical focus behaviour -- this form is keyboard-heavy. */
+.control {
+  width: 100%;
+  background-color: var(--color-ink-850);
+  border: 1px solid var(--color-ink-700);
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--color-ink-200);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.control::placeholder {
+  color: var(--color-ink-500);
+}
+
+.control:hover:not(:disabled) {
+  border-color: var(--color-ink-600);
+}
+
+.control:focus-visible {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  background-color: var(--color-ink-800);
+}
+
+.control:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.control--invalid {
+  border-color: #b4453a;
+}
+
+.control--invalid:focus-visible {
+  border-color: #e0655a;
+  box-shadow: 0 0 0 3px rgba(224, 101, 90, 0.2);
+}
+
+/* Native select arrow is unstyleable across browsers -- draw our own. */
+select.control {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%238b8b97' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 6 6.5l5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+
+/* Borough selects only. A location pin on the left marks these two as
+   geographic, while the chevron stays put so they still read as openable.
+   Layered backgrounds: first image sits on top, positions match that order. */
+select.control--pin {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 16 16'%3E%3Cg fill='none' stroke='%238b8b97' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 14.5s4.5-4.2 4.5-7.5a4.5 4.5 0 1 0-9 0c0 3.3 4.5 7.5 4.5 7.5Z'/%3E%3Ccircle cx='8' cy='6.8' r='1.7'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%238b8b97' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 6 6.5l5-5'/%3E%3C/svg%3E");
+  background-position: left 0.75rem center, right 0.75rem center;
+  background-repeat: no-repeat, no-repeat;
+  padding-left: 2.25rem;
+}
+
+/* Strip the number spinners; they fight with decimal coordinates. */
+.control[type="number"]::-webkit-outer-spin-button,
+.control[type="number"]::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.control[type="number"] {
+  appearance: textfield;
+}
+
+/* datetime-local picker icon is near-invisible on a dark ground. */
+.control[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.6);
+  cursor: pointer;
+}
+
+/* Range slider */
+.slider {
+  width: 100%;
+  appearance: none;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-runnable-track {
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--color-ink-700);
+}
+
+.slider::-moz-range-track {
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--color-ink-700);
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  margin-top: -0.3125rem;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 999px;
+  background: var(--color-accent);
+  border: 2px solid var(--color-ink-950);
+  transition: box-shadow 0.15s ease;
+}
+
+.slider::-moz-range-thumb {
+  height: 1rem;
+  width: 1rem;
+  border: 2px solid var(--color-ink-950);
+  border-radius: 999px;
+  background: var(--color-accent);
+}
+
+.slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+.slider:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+/* Focus ring for buttons and other non-.control interactives. */
+.focus-accent:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
